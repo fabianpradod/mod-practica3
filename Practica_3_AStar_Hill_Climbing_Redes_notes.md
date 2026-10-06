@@ -39,6 +39,8 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - Red residual como diccionario `residual[u][v]` con la arista de regreso en la misma tabla, rechazando pares de tramos opuestos | es la forma más simple de leer y basta porque esta red no tiene tramos opuestos | listas paralelas con índices de arista, necesarias solo si hubiera u-v y v-u.
 - Referencia de la Parte 3A: corte mínimo de la red residual final | si su capacidad iguala al flujo, el flujo es máximo sin necesidad de otra herramienta | comparar contra `networkx` dentro del notebook, prohibido.
 - La verificación de la actividad 17 termina con `assert` | si algo falla el notebook se detiene en vez de solo imprimir "no" | solo imprimir la tabla.
+- Costo mínimo por caminos sucesivos con Bellman-Ford | acepta los costos negativos de las aristas de regreso y es fácil de seguir por iteración | Dijkstra con potenciales, más rápido pero más difícil de explicar.
+- Arista de regreso con costo -c | devolver una unidad descuenta lo que costó mandarla, y eso permite cambiar una ruta por otra más barata | costo 0 en el regreso, que haría creer que deshacer es gratis.
 - El extra de la Parte 3B usa Edmonds-Karp con los tramos ordenados por costo ascendente en vez de comparar contra el Edmonds-Karp del enunciado | con el orden del enunciado Edmonds-Karp cae justo en la distribución de costo mínimo (88), y con los tramos baratos primero da 89 y usa una arista de regreso | armar una distribución a mano.
 
 ## Hallazgos
@@ -55,6 +57,9 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - Parte 3A: Edmonds-Karp llega a flujo máximo 14 en 5 caminos aumentantes (S-A-D-T 3, S-B-D-T 4, S-B-E-T 3, S-C-E-T 3, S-C-E-D-T 1), sin usar aristas de regreso. 7 de 12 tramos saturados; A-B y B-C sin flujo; D-T en 8 de 9.
 - Parte 3A: corte mínimo {S, A, B, C, E} contra {D, T}: A-D 3 + B-D 4 + E-D 1 + E-T 6 = 14. Cortes obvios: salida de S 16, entrada a T 15.
 - Parte 3A: la distribución de Edmonds-Karp cuesta 88, lo mismo que el costo mínimo.
+- Parte 3B: costo mínimo 88 para 14 unidades con 5 rutas: S-A-D-T (6, 3 u), S-B-D-T (6, 4 u), S-B-E-T (6, 3 u), S-C-E-T (7, 3 u), S-C-E-D-T (7, 1 u). No usa aristas de regreso. Pidiendo 15 solo envía 14.
+- Parte 3B: al inicio hay 6 rutas de costo 6 por unidad; Bellman-Ford toma la primera que encuentra.
+- Parte 3B: Edmonds-Karp con los tramos ordenados por costo ascendente envía 14 en 7 caminos con costo 89; su último camino S-C-E-B-D-T usa la arista de regreso E-B. Sin aristas de regreso esa misma corrida se queda en 13 (comprobado fuera del notebook).
 - Parte 3: enumerando todas las distribuciones enteras con flujo 14 (fuera del notebook, unos 121 millones de combinaciones) hay exactamente 4: costos 88, 89, 89 y 90. La de costo 88 es única.
 
 ## Aprendido
@@ -65,6 +70,10 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - A\* tiene que expandir todo nodo con g\*(n) + h(n) menor que el costo óptimo. Una heurística admisible pero floja no descarta nada en una red pequeña donde todo queda en dirección a la meta.
 - A\* termina cuando la meta sale de la lista abierta, no cuando aparece: aquí T apareció primero con 14 y luego bajó a 13.
 - Heurística consistente: |h(u) - h(v)| <= w(u, v) en cada arista; junto con h(meta) = 0 implica admisible.
+- El resultado de Edmonds-Karp depende del orden en que BFS revisa los vecinos: con el mismo flujo máximo puede quedar una distribución barata o cara, porque no mira costos.
+- Las aristas de regreso no son un detalle técnico: en la corrida con tramos por costo, sin ellas el algoritmo se queda en 13 en vez de 14.
+- En caminos sucesivos de menor costo el costo por unidad nunca baja (6, 6, 6, 7, 7): se agotan primero las rutas baratas.
+- Ampliar un tramo que no está en el corte mínimo no aumenta el flujo máximo, porque ese corte sigue igual.
 
 ## Pendientes y dudas
 
@@ -75,3 +84,4 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - 2026-10-06: Parte 1 resuelta, verificada contra fuerza bruta independiente (12 de 12 chequeos)
 - 2026-10-06: Parte 2 resuelta, verificada contra `networkx` fuera del notebook (12 de 12 chequeos)
 - 2026-10-06: Parte 3A resuelta, verificada contra `networkx` fuera del notebook (9 de 9 chequeos)
+- 2026-10-06: Parte 3B resuelta, verificada contra `networkx` fuera del notebook (9 de 9 chequeos, incluye objetivo de 5 unidades)
