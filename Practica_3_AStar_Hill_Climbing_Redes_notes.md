@@ -85,3 +85,4 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - 2026-10-06: Parte 2 resuelta, verificada contra `networkx` fuera del notebook (12 de 12 chequeos)
 - 2026-10-06: Parte 3A resuelta, verificada contra `networkx` fuera del notebook (9 de 9 chequeos)
 - 2026-10-06: Parte 3B resuelta, verificada contra `networkx` fuera del notebook (9 de 9 chequeos, incluye objetivo de 5 unidades)
+- 2026-10-06: tabla de integración y conclusiones escritas; `check_notebook.py` pasa sin observaciones
