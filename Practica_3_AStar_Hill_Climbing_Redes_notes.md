@@ -31,6 +31,11 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - Tours al azar para los reinicios por rechazo: barajar las ciudades 2 a 7 hasta que el tour sea válido | da cada uno de los 20 tours válidos con la misma probabilidad, y eso permite calcular la probabilidad de éxito por reinicio | arrancar desde tours no válidos con penalización, que cambia la función objetivo.
 - Fuerza bruta de los 720 órdenes como referencia de la Parte 1 | es barata y da el óptimo exacto | comparar solo contra el tour inicial, que no dice si 64 es bueno.
 - Ciudades dibujadas en un círculo | el enunciado no da coordenadas y un círculo no sugiere distancias falsas | inventar coordenadas.
+- A\* con entradas viejas en el heap que se ignoran al salir (borrado perezoso) y sin reabrir nodos cerrados | `heapq` no permite bajar la prioridad de una entrada, y con heurística consistente cerrar es seguro | buscar y reemplazar la entrada dentro del heap.
+- Empates de f en A\* por menor h y luego por nombre | determinista y prefiere el nodo más cerca de la meta | orden de inserción.
+- `a_estrella` recibe un parámetro `h` opcional | la misma función sirve para h = 0 y h\* sin duplicar código | una función aparte para Dijkstra.
+- Agregar la heurística perfecta h\*(n) (costo real con Dijkstra) | con la euclidiana A\* y Dijkstra expanden lo mismo (7), y h\* muestra con números cuándo una heurística sí ahorra (5) | dejar solo la comparación pedida, que no ilustraba el ahorro.
+- Fuerza bruta de rutas simples como referencia de la Parte 2 | confirma el óptimo y deja ver el empate entre dos rutas | solo comparar contra h = 0.
 
 ## Hallazgos
 
@@ -39,12 +44,19 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - Parte 1: Hill Climbing desde el tour inicial baja 69 a 65 a 64 y se detiene en 1-2-4-6-5-3-7-1, un óptimo local. El óptimo global es 63 (1-2-4-6-7-5-3-1 y su reverso).
 - Parte 1: con 100 reinicios (semilla 42) el mejor es 63; 22 de 100 reinicios llegan ahí, 34 a 64 y 44 a 65. Solo 6 de 20 arranques válidos (30%) llevan al óptimo: con 10 reinicios hay 97.2% de encontrarlo.
 - Parte 1: 22 de 100 está bajo lo esperado (30); con p = 0.3, 22 o menos pasa en cerca del 5% de las corridas (calculado con `scipy` fuera del notebook).
+- Parte 2: la heurística euclidiana es admisible (63% a 72% del costo real) y consistente en los 12 caminos; la holgura mínima es 0.29 en B-E.
+- Parte 2: A\* encuentra O-A-B-D-T con costo 13 (2 + 2 + 4 + 5) y expande los 7 nodos. Con h = 0, misma ruta y mismo costo, también 7 nodos en otro orden. Con h\* perfecta, 5 nodos.
+- Parte 2: la euclidiana no ahorra porque todos los nodos tienen g\*(n) + h(n) entre 9.01 y 11.54, debajo del óptimo 13.
+- Parte 2: hay 28 rutas simples de O a T y dos óptimas empatadas en 13: O-A-B-D-T y O-A-B-E-D-T.
 
 ## Aprendido
 
 - Un óptimo local puede estar a dos movimientos del global con el paso intermedio prohibido: aquí pasar de 64 a 63 exige dos inversiones y la primera usa la carretera inexistente 5-1.
 - En un problema simétrico, invertir todo el tramo libre da el mismo ciclo al revés con la misma distancia; ese vecino nunca mejora.
 - Los empates importan en Hill Climbing: con el otro vecino de 65 en el primer paso se habría detenido en 65.
+- A\* tiene que expandir todo nodo con g\*(n) + h(n) menor que el costo óptimo. Una heurística admisible pero floja no descarta nada en una red pequeña donde todo queda en dirección a la meta.
+- A\* termina cuando la meta sale de la lista abierta, no cuando aparece: aquí T apareció primero con 14 y luego bajó a 13.
+- Heurística consistente: |h(u) - h(v)| <= w(u, v) en cada arista; junto con h(meta) = 0 implica admisible.
 
 ## Pendientes y dudas
 
@@ -53,3 +65,4 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - 2026-10-06: notebook creado
 - 2026-10-06: configuración limitada a las librerías permitidas por el enunciado
 - 2026-10-06: Parte 1 resuelta, verificada contra fuerza bruta independiente (12 de 12 chequeos)
+- 2026-10-06: Parte 2 resuelta, verificada contra `networkx` fuera del notebook (12 de 12 chequeos)
