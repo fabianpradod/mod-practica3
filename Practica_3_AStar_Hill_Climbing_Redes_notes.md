@@ -36,6 +36,10 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - `a_estrella` recibe un parámetro `h` opcional | la misma función sirve para h = 0 y h\* sin duplicar código | una función aparte para Dijkstra.
 - Agregar la heurística perfecta h\*(n) (costo real con Dijkstra) | con la euclidiana A\* y Dijkstra expanden lo mismo (7), y h\* muestra con números cuándo una heurística sí ahorra (5) | dejar solo la comparación pedida, que no ilustraba el ahorro.
 - Fuerza bruta de rutas simples como referencia de la Parte 2 | confirma el óptimo y deja ver el empate entre dos rutas | solo comparar contra h = 0.
+- Red residual como diccionario `residual[u][v]` con la arista de regreso en la misma tabla, rechazando pares de tramos opuestos | es la forma más simple de leer y basta porque esta red no tiene tramos opuestos | listas paralelas con índices de arista, necesarias solo si hubiera u-v y v-u.
+- Referencia de la Parte 3A: corte mínimo de la red residual final | si su capacidad iguala al flujo, el flujo es máximo sin necesidad de otra herramienta | comparar contra `networkx` dentro del notebook, prohibido.
+- La verificación de la actividad 17 termina con `assert` | si algo falla el notebook se detiene en vez de solo imprimir "no" | solo imprimir la tabla.
+- El extra de la Parte 3B usa Edmonds-Karp con los tramos ordenados por costo ascendente en vez de comparar contra el Edmonds-Karp del enunciado | con el orden del enunciado Edmonds-Karp cae justo en la distribución de costo mínimo (88), y con los tramos baratos primero da 89 y usa una arista de regreso | armar una distribución a mano.
 
 ## Hallazgos
 
@@ -48,6 +52,10 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - Parte 2: A\* encuentra O-A-B-D-T con costo 13 (2 + 2 + 4 + 5) y expande los 7 nodos. Con h = 0, misma ruta y mismo costo, también 7 nodos en otro orden. Con h\* perfecta, 5 nodos.
 - Parte 2: la euclidiana no ahorra porque todos los nodos tienen g\*(n) + h(n) entre 9.01 y 11.54, debajo del óptimo 13.
 - Parte 2: hay 28 rutas simples de O a T y dos óptimas empatadas en 13: O-A-B-D-T y O-A-B-E-D-T.
+- Parte 3A: Edmonds-Karp llega a flujo máximo 14 en 5 caminos aumentantes (S-A-D-T 3, S-B-D-T 4, S-B-E-T 3, S-C-E-T 3, S-C-E-D-T 1), sin usar aristas de regreso. 7 de 12 tramos saturados; A-B y B-C sin flujo; D-T en 8 de 9.
+- Parte 3A: corte mínimo {S, A, B, C, E} contra {D, T}: A-D 3 + B-D 4 + E-D 1 + E-T 6 = 14. Cortes obvios: salida de S 16, entrada a T 15.
+- Parte 3A: la distribución de Edmonds-Karp cuesta 88, lo mismo que el costo mínimo.
+- Parte 3: enumerando todas las distribuciones enteras con flujo 14 (fuera del notebook, unos 121 millones de combinaciones) hay exactamente 4: costos 88, 89, 89 y 90. La de costo 88 es única.
 
 ## Aprendido
 
@@ -66,3 +74,4 @@ Formato: qué se decidió | por qué | alternativa descartada.
 - 2026-10-06: configuración limitada a las librerías permitidas por el enunciado
 - 2026-10-06: Parte 1 resuelta, verificada contra fuerza bruta independiente (12 de 12 chequeos)
 - 2026-10-06: Parte 2 resuelta, verificada contra `networkx` fuera del notebook (12 de 12 chequeos)
+- 2026-10-06: Parte 3A resuelta, verificada contra `networkx` fuera del notebook (9 de 9 chequeos)
